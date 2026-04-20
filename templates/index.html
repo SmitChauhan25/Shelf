@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+<section class="hero-home">
+    <div class="hero-image-wrapper">
+        <img src="{{ url_for('static', filename='bg_hero_clean.png') }}" alt="Library Background" class="hero-image">
+        <div class="hero-overlay"></div>
+    
+    </div>
+    
+    <div class="hero-landing-block">
+        <h1 class="hero-heading">Discover the books<br>of your dreams</h1>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('browse') }}" class="hero-cta">Discover Shelf</a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="hero-cta">Discover Shelf</a>
+        {% endif %}
+    </div>
+
+    <div class="hero-subtext" style="position: absolute; right: 12%; top: 60%; text-align: right; color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; max-width: 300px; opacity: 0.8; z-index: 5;">
+        The library that never sleeps.<br>Explore curated collections crafted just for you.
+    </div>
+
+    <div class="hero-scroll">
+        <div class="hero-scroll-text">Browse Books</div>
+        <svg class="hero-scroll-icon-horizontal" viewBox="0 0 100 24" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="0" y1="12" x2="90" y2="12" stroke="currentColor" stroke-width="0.8"/>
+            <polyline points="85,8 90,12 85,16" stroke="currentColor" stroke-width="0.8" fill="none"/>
+        </svg>
+    </div>
+</section>
+
+<section class="home-content-inner">
+        <div class="intro-text">
+            <p>As passionate purveyors of literature, we have curated a collection of thousands of works spanning all genres: historical fiction, sci-fi, biography, fantasy, and more.</p>
+            <p>Having journeyed through countless miles of words and synthesized our curated experiences, we have realized the library of your dreams.</p>
+            <p>This is how we imagined SHELF.</p>
+        </div>
+
+    <div class="services-header">
+        <span class="eyebrow">YOUR JOURNEY</span>
+        <h2>Discover our Shelf Services</h2>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-number">26k</div>
+            <div class="stat-label">Shelf 01 SIGN UP</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">34k</div>
+            <div class="stat-label">Shelf 02 LOGIN</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">42k</div>
+            <div class="stat-label">Shelf 03 BROWSE</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">50k</div>
+            <div class="stat-label">Shelf 04 REQUEST</div>
+        </div>
+    </div>
+
+    <div class="portals-grid">
+        <a href="{{ url_for('browse') }}" class="portal-card">
+            <div class="portal-header">[BORROW BOOK]</div>
+            <div class="portal-body body-machine">
+                <div class="slot"></div>
+                <div class="receipt">
+                    <div class="receipt-text title">BORROW RECEIPT</div>
+                    <div class="receipt-text small mt-10">Cash Desk: 0</div>
+                    <div class="receipt-text small">Emp: L.</div>
+                    <div class="receipt-text small mt-10">Book: A...</div>
+                </div>
+                <div class="machine-details">
+                    <div class="button-circle"></div>
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('browse') }}" class="portal-card">
+            <div class="portal-header">[RETURN BOOKS]</div>
+            <div class="portal-body body-machine dark-wood">
+                <div class="slot dark"></div>
+                <div class="receipt">
+                    <div class="receipt-text title">RETURN RECEIPT</div>
+                    <div class="receipt-text small mt-10">Receipt: 4022</div>
+                    <div class="receipt-text small">Time: ...</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin') }}" class="portal-card">
+            <div class="portal-header">[ADMIN PORTAL]</div>
+            <div class="portal-body body-dashboard">
+                <div class="dash-panel books">
+                    <div class="panel-title">BOOKS</div>
+                    <div class="chart-bars">
+                        <div class="bar h-60"></div><div class="bar h-80"></div>
+                        <div class="bar h-40"></div><div class="bar h-100"></div>
+                        <div class="bar h-70"></div>
+                    </div>
+                </div>
+                <div class="dash-panel users">
+                    <div class="panel-title">USERS</div>
+                    <div class="user-icons">
+                        <div class="u-icon l"></div><div class="u-icon m"></div><div class="u-icon r"></div>
+                    </div>
+                    <div class="bottom-badges">
+                        <span class="bdg active">PENDING</span><span class="bdg">USERS</span>
+                    </div>
+                </div>
+                <div class="dash-panel transactions">
+                    <div class="panel-title">TRANSACTIONS</div>
+                    <div class="list-lines">
+                        <div class="l-item"><div class="dot active"></div><div class="line"></div></div>
+                        <div class="l-item"><div class="dot"></div><div class="line w-75"></div></div>
+                        <div class="l-item"><div class="dot "></div><div class="line w-50"></div></div>
+                        <div class="l-item"><div class="dot active"></div><div class="line w-100"></div></div>
+                    </div>
+                    <div class="bottom-badges mt-10">
+                        <span class="bdg">ALL</span><span class="bdg active">TODAY</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tl = gsap.timeline();
+        
+        // Navbar drops in symmetrically
+        tl.from("nav .nav-left, nav .nav-center, nav .nav-right", {
+            y: -30,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "power3.out"
+        }, 0);
+        
+        // Cinematic reveal of the clean render (subtle mask effect via scale and slide)
+        tl.from(".hero-image-wrapper", {
+            scale: 1.08,
+            y: 30,
+            opacity: 0,
+            duration: 1.7,
+            ease: "power2.out"
+        }, "-=0.7");
+        
+        // Left text and bottom scroll indicator fade up into place
+        tl.from(".hero-landing-block, .hero-scroll", {
+            y: 20,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power2.out"
+        }, "-=1.0");
+    });
+</script>
+{% endblock %}

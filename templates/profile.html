@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block body_class %}profile-page{% endblock %}
+{% block content %}
+<div class="container" style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 40px; margin-top: 50px;">
+    <!-- LEFT PANE: USER INFO -->
+    <div class="profile-sidebar" style="border: 2px solid var(--ink); padding: 40px; background: var(--cream); height: fit-content; position: sticky; top: 120px;">
+        <span class="eyebrow">YOUR ACCOUNT</span>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--ink); margin: 20px 0 10px 0; line-height: 1;">{{ current_user.name }}</h2>
+        <p style="font-size: 0.9rem; font-family: 'IBM Plex Mono', monospace; color: rgba(28,26,23,0.7); margin-bottom: 30px;">{{ current_user.email }}</p>
+        
+        <!-- Fine Status Card -->
+        <div class="fine-status-card" style="border: 2px solid {% if fine_count > 0 %}var(--accent-red){% else %}#829a73{% endif %}; padding: 20px; margin-bottom: 30px; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: {% if fine_count > 0 %}var(--accent-red){% else %}#829a73{% endif %};"></div>
+            <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(28,26,23,0.6); margin-bottom: 12px;">Fine Status</h3>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span class="fine-badge {% if fine_count > 0 %}fine-badge-active{% else %}fine-badge-clear{% endif %}">
+                    {{ fine_count }}
+                </span>
+                <div>
+                    {% if fine_count > 0 %}
+                        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--accent-red); font-weight: 600; margin-bottom: 4px;">
+                            {{ fine_count }} Outstanding Fine{{ 's' if fine_count != 1 else '' }}
+                        </p>
+                        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: rgba(28,26,23,0.5); line-height: 1.4;">
+                            Overdue books detected. Please return books promptly to avoid further penalties.
+                        </p>
+                    {% else %}
+                        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: #829a73; font-weight: 600; margin-bottom: 4px;">
+                            All Clear
+                        </p>
+                        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: rgba(28,26,23,0.5); line-height: 1.4;">
+                            No outstanding fines. Keep it up!
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        
+        <h3 style="font-family: 'IBM Plex Mono', monospace; font-size: 1rem; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase;">Request a Book</h3>
+        <p style="font-size: 0.8rem; font-family: 'IBM Plex Mono', monospace; margin-bottom: 20px; color: rgba(28,26,23,0.7); line-height: 1.5;">Can't find a book in our collection? Submit a request and our curators will hunt it down.</p>
+        
+        <form action="{{ url_for('request_book') }}" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <input type="text" id="title" name="title" placeholder="Book Title" required style="width: 100%; border: 1px solid var(--ink); padding: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; background: transparent; border-radius: 0;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <input type="text" id="author" name="author" placeholder="Author (optional)" style="width: 100%; border: 1px solid var(--ink); padding: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; background: transparent; border-radius: 0;">
+            </div>
+            <button type="submit" class="btn" style="width: 100%; padding: 10px; border-radius: 0; font-size: 0.8rem;">Submit Request</button>
+        </form>
+    </div>
+
+    <!-- RIGHT PANE: DATA -->
+    <div class="profile-content">
+        <!-- Borrowing History -->
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--ink); margin-bottom: 20px;">Borrowing History</h3>
+        <div class="book-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); margin-bottom: 60px;">
+            {% if transactions %}
+                {% for t in transactions %}
+                    <div class="book-card" style="position: relative; border-radius: 0; border: 2px solid var(--ink);">
+                        <div style="position: absolute; top: 15px; right: 15px; 
+                                    background: {% if t.status == 'borrowed' %}#829a73{% elif t.status == 'pending' %}#c9a45c{% elif t.status == 'rejected' %}var(--accent-red){% else %}#1c1a17{% endif %}; 
+                                    color: var(--cream); padding: 5px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; font-weight: 600; border-radius: 0; text-transform: uppercase;">
+                            {{ t.status }}
+                        </div>
+                        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 15px; color: var(--ink); padding-right: 70px;">{{ t.title }}</h3>
+                        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: rgba(28,26,23,0.7); margin-bottom: 8px;">Borrowed: {{ t.borrow_date }}</p>
+                        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: rgba(28,26,23,0.7); margin-bottom: 20px;">Due: {{ t.due_date }}</p>
+                        
+                        {% if t.status == 'borrowed' %}
+                            <a href="{{ url_for('return_book', transaction_id=t.id) }}" class="btn" style="margin-top: auto; border-radius: 0;">Return Book</a>
+                        {% elif t.status == 'pending' %}
+                            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: #c9a45c; margin-top: auto; font-weight: bold;">Awaiting Approval</p>
+                        {% elif t.status == 'rejected' %}
+                            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--accent-red); margin-top: auto; font-weight: bold;">Request Denied</p>
+                        {% else %}
+                            <p style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: rgba(28,26,23,0.7); margin-top: auto;">Returned: {{ t.return_date }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="font-family: 'IBM Plex Mono', monospace; color: var(--ink); grid-column: 1 / -1;">You have no borrowing history yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Book Requests -->
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--ink); margin-bottom: 20px;">Your Curated Requests</h3>
+        <div style="border-top: 2px solid var(--ink); padding-top: 20px;">
+            {% if requests %}
+                <table class="data-table" style="width: 100%; text-align: left; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem;">
+                            <th style="padding: 10px 0;">Title</th>
+                            <th>Author</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in requests %}
+                        <tr style="border-bottom: 1px solid rgba(28,26,23,0.2); font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem;">
+                            <td style="padding: 15px 0; font-weight: 600;">{{ r.title }}</td>
+                            <td>{{ r.author if r.author else 'Unknown' }}</td>
+                            <td>{{ r.request_date }}</td>
+                            <td style="text-transform: uppercase; font-size: 0.75rem; font-weight: bold;
+                                color: {% if r.status == 'approved' %}#829a73{% elif r.status == 'rejected' %}var(--accent-red){% else %}#c9a45c{% endif %};">
+                                {{ r.status }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p style="font-family: 'IBM Plex Mono', monospace; color: var(--ink);">You haven't requested any books yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

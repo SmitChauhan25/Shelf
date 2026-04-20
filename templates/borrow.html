@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <div class="receipt-title">Transaction Receipt</div>
+            <div style="font-size: 0.85rem; color: var(--warm-brown);">Shelf Library Management System</div>
+        </div>
+        
+        <div class="receipt-row">
+            <span>Action:</span>
+            <span>BORROW</span>
+        </div>
+        <div class="receipt-row">
+            <span>Book Title:</span>
+            <span style="font-weight: 500;">{{ book.title }}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Author:</span>
+            <span>{{ book.author }}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Borrowed By:</span>
+            <span>{{ current_user.name }}</span>
+        </div>
+        
+        <hr style="border: 0; border-top: 1px dashed rgba(26,26,26,0.1); margin: 20px 0;">
+        
+        <div class="receipt-row">
+            <span>Date Borrowed:</span>
+            <span>{{ borrow_date.strftime('%b %d, %Y') }}</span>
+        </div>
+        <div class="receipt-row">
+            <span>Date Due:</span>
+            <span style="font-weight: bold; color: var(--accent-red);">{{ due_date.strftime('%b %d, %Y') }}</span>
+        </div>
+        
+        <div class="receipt-footer">
+            <p style="margin-bottom: 20px; font-style: italic; color: var(--warm-brown);">Please return the book on or before the due date.</p>
+            <a href="{{ url_for('browse') }}" class="btn">Return to Catalog</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

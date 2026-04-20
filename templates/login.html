@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title">Welcome Back</h2>
+    
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autofocus>
+            </div>
+            
+            <div class="form-group" style="position: relative;">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required style="padding-right: 60px;">
+                <button type="button" class="toggle-password" onclick="togglePassword()" style="position: absolute; right: 10px; top: 35px; background: none; border: none; font-size: 0.8rem; font-family: 'IBM Plex Mono', monospace; cursor: pointer; color: var(--ink); text-transform: uppercase;">Show</button>
+            </div>
+            
+            <button type="submit" class="btn">Login to Shelf</button>
+        </form>
+        
+        <script>
+            function togglePassword() {
+                const input = document.getElementById('password');
+                const btn = document.querySelector('.toggle-password');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    btn.textContent = 'Hide';
+                } else {
+                    input.type = 'password';
+                    btn.textContent = 'Show';
+                }
+            }
+        </script>
+        
+        <div class="form-footer">
+            New to Shelf? <a href="{{ url_for('signup') }}">Create an account</a>.
+        </div>
+    </div>
+</div>
+{% endblock %}

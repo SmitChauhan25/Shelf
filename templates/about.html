@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="about-page">
+    <div class="about-hero">
+        <h1 class="about-heading">The Archive of Imagination</h1>
+        <div class="about-content">
+            <p class="eyebrow">ABOUT SHELF</p>
+            <p class="large-text">
+                Welcome to Shelf, a premium repository of the greatest works across historical fiction, sci-fi, biography, fantasy, and more. 
+            </p>
+            <p class="body-text">
+                Having journeyed through countless miles of words and synthesized our curated experiences, we realized the ultimate library of your dreams. This platform was born out of a profound love for literature and a commitment to preserving the tactile beauty of reading in a modern, streamlined digital interface.
+            </p>
+            <div class="about-metrics mt-10">
+                <div class="metrics-card">
+                    <span class="m-val">2.5M+</span>
+                    <span class="m-label">Volumes</span>
+                </div>
+                <div class="metrics-card">
+                    <span class="m-val">1980</span>
+                    <span class="m-label">Established</span>
+                </div>
+            </div>
+            <a href="{{ url_for('browse') }}" class="about-cta">Explore Our Collection</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
