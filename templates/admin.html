@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-        <h2 class="page-title" style="margin-bottom: 20px;">Admin Dashboard</h2>
+    <div class="admin-header">
+        <h2 class="page-title">Admin Dashboard</h2>
     </div>
     
     <div class="admin-tabs">
@@ -16,53 +16,55 @@
     
     <!-- Transactions Tab -->
     <div id="tab-transactions" class="admin-section active">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Book</th>
-                    <th>Borrow Date</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for t in transactions %}
-                <tr>
-                    <td>#{{ t.id }}</td>
-                    <td>{{ t.user_name }}</td>
-                    <td style="font-weight: 500;">{{ t.book_title }}</td>
-                    <td>{{ t.borrow_date }}</td>
-                    <td>{{ t.due_date }}</td>
-                    <td style="text-transform: uppercase; font-size: 0.75rem; font-weight: bold;
-                        color: {% if t.status == 'borrowed' %}#829a73{% elif t.status == 'rejected' %}var(--accent-red){% elif t.status == 'pending' %}#c9a45c{% else %}#1c1a17{% endif %};">
-                        {{ t.status }}
-                        {% if t.is_overdue %}
-                        <span class="overdue-badge">OVERDUE</span>
-                        {% endif %}
-                    </td>
-                    <td class="action-cell">
-                        {% if t.status == 'pending' %}
-                        <div style="display: flex; gap: 10px;">
-                            <form action="{{ url_for('admin_approve_transaction', trans_id=t.id) }}" method="POST" style="margin:0;">
-                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem;">APPROVE</button>
-                            </form>
-                            <form action="{{ url_for('admin_reject_transaction', trans_id=t.id) }}" method="POST" style="margin:0;">
-                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: var(--cream); border: 1px solid var(--ink); color: var(--ink);">REJECT</button>
-                            </form>
-                        </div>
-                        {% else %}
-                        <span style="font-size: 0.75rem; color: rgba(28,26,23,0.5);">NO ACTIONS</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="7" style="text-align:center;">No transactions found.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td>#{{ t.id }}</td>
+                        <td>{{ t.user_name }}</td>
+                        <td style="font-weight: 500;">{{ t.book_title }}</td>
+                        <td>{{ t.borrow_date }}</td>
+                        <td>{{ t.due_date }}</td>
+                        <td style="text-transform: uppercase; font-size: 0.75rem; font-weight: bold;
+                            color: {% if t.status == 'borrowed' %}#829a73{% elif t.status == 'rejected' %}var(--accent-red){% elif t.status == 'pending' %}#c9a45c{% else %}#1c1a17{% endif %};">
+                            {{ t.status }}
+                            {% if t.is_overdue %}
+                            <span class="overdue-badge">OVERDUE</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-cell">
+                            {% if t.status == 'pending' %}
+                            <div class="btn-group-short">
+                                <form action="{{ url_for('admin_approve_transaction', trans_id=t.id) }}" method="POST" style="margin:0;">
+                                    <button type="submit" class="btn btn-tiny">APPROVE</button>
+                                </form>
+                                <form action="{{ url_for('admin_reject_transaction', trans_id=t.id) }}" method="POST" style="margin:0;">
+                                    <button type="submit" class="btn btn-tiny btn-outline">REJECT</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <span class="no-actions">NO ACTIONS</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" style="text-align:center;">No transactions found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Books Tab -->
@@ -70,39 +72,41 @@
         <div style="margin-bottom: 20px; text-align: right;">
             <button class="btn" onclick="openModal('addBookModal')">+ ADD NEW BOOK</button>
         </div>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Genre</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for b in books %}
-                <tr>
-                    <td>#{{ b.id }}</td>
-                    <td style="font-weight: 500;">{{ b.title }}</td>
-                    <td>{{ b.author }}</td>
-                    <td>{{ b.genre }}</td>
-                    <td>{{ b.available_copies }}</td>
-                    <td class="action-cell">
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="openEditBookModal('{{ b.id }}', '{{ b.title|escape }}', '{{ b.author|escape }}', '{{ b.genre|escape }}', '{{ b.available_copies }}')" class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: var(--cream); border: 1px solid var(--ink); color: var(--ink);">EDIT</button>
-                            <form action="{{ url_for('admin_delete_book', book_id=b.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Delete this book and all its history?');">
-                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: var(--accent-red); border: 1px solid var(--ink);">DELETE</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="6" style="text-align:center;">No books found.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Genre</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in books %}
+                    <tr>
+                        <td>#{{ b.id }}</td>
+                        <td style="font-weight: 500;">{{ b.title }}</td>
+                        <td>{{ b.author }}</td>
+                        <td>{{ b.genre }}</td>
+                        <td>{{ b.available_copies }}</td>
+                        <td class="action-cell">
+                            <div class="btn-group-short">
+                                <button onclick="openEditBookModal('{{ b.id }}', '{{ b.title|escape }}', '{{ b.author|escape }}', '{{ b.genre|escape }}', '{{ b.available_copies }}')" class="btn btn-tiny btn-outline">EDIT</button>
+                                <form action="{{ url_for('admin_delete_book', book_id=b.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Delete this book and all its history?');">
+                                    <button type="submit" class="btn btn-tiny btn-danger">DELETE</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" style="text-align:center;">No books found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Users Tab -->
@@ -110,149 +114,155 @@
         <div style="margin-bottom: 20px; text-align: right;">
             <button class="btn" onclick="openModal('addUserModal')">+ ADD NEW USER</button>
         </div>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Fines</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for u in users %}
-                <tr>
-                    <td>#{{ u.id }}</td>
-                    <td style="font-weight: 500;">{{ u.name }}</td>
-                    <td>{{ u.email }}</td>
-                    <td>{{ u.role|upper }}</td>
-                    <td>
-                        {% if u.fine_count and u.fine_count > 0 %}
-                        <span class="fine-count-badge">{{ u.fine_count }}</span>
-                        {% else %}
-                        <span style="color: #829a73; font-size: 0.75rem; font-weight: bold;">0</span>
-                        {% endif %}
-                    </td>
-                    <td class="action-cell">
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="openEditUserModal('{{ u.id }}', '{{ u.name|escape }}', '{{ u.email|escape }}', '{{ u.role }}')" class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: var(--cream); border: 1px solid var(--ink); color: var(--ink);">EDIT</button>
-                            <form action="{{ url_for('admin_delete_user', user_id=u.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Delete this user? All their transactions will be deleted.');">
-                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: var(--accent-red); border: 1px solid var(--ink);">DELETE</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="6" style="text-align:center;">No users found.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Fines</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>#{{ u.id }}</td>
+                        <td style="font-weight: 500;">{{ u.name }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.role|upper }}</td>
+                        <td>
+                            {% if u.fine_count and u.fine_count > 0 %}
+                            <span class="fine-count-badge">{{ u.fine_count }}</span>
+                            {% else %}
+                            <span class="fine-clear">0</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-cell">
+                            <div class="btn-group-short">
+                                <button onclick="openEditUserModal('{{ u.id }}', '{{ u.name|escape }}', '{{ u.email|escape }}', '{{ u.role }}')" class="btn btn-tiny btn-outline">EDIT</button>
+                                <form action="{{ url_for('admin_delete_user', user_id=u.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Delete this user? All their transactions will be deleted.');">
+                                    <button type="submit" class="btn btn-tiny btn-danger">DELETE</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" style="text-align:center;">No users found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Book Requests Tab -->
     <div id="tab-requests" class="admin-section">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Requested Title</th>
-                    <th>Author</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in book_requests %}
-                <tr>
-                    <td>#{{ r.id }}</td>
-                    <td>{{ r.user_name }}<br><small>{{ r.user_email }}</small></td>
-                    <td style="font-weight: 500;">{{ r.title }}</td>
-                    <td>{{ r.author if r.author else '-' }}</td>
-                    <td>{{ r.request_date }}</td>
-                    <td style="text-transform: uppercase; font-size: 0.75rem; font-weight: bold;
-                        color: {% if r.status == 'approved' %}#829a73{% elif r.status == 'rejected' %}var(--accent-red){% else %}#c9a45c{% endif %};">
-                        {{ r.status }}
-                    </td>
-                    <td class="action-cell">
-                        {% if r.status == 'pending' %}
-                        <div style="display: flex; gap: 10px;">
-                            <form action="{{ url_for('admin_approve_request', req_id=r.id) }}" method="POST" style="margin:0;">
-                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem;">APPROVE</button>
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Requested Title</th>
+                        <th>Author</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in book_requests %}
+                    <tr>
+                        <td>#{{ r.id }}</td>
+                        <td>{{ r.user_name }}<br><small>{{ r.user_email }}</small></td>
+                        <td style="font-weight: 500;">{{ r.title }}</td>
+                        <td>{{ r.author if r.author else '-' }}</td>
+                        <td>{{ r.request_date }}</td>
+                        <td style="text-transform: uppercase; font-size: 0.75rem; font-weight: bold;
+                            color: {% if r.status == 'approved' %}#829a73{% elif r.status == 'rejected' %}var(--accent-red){% else %}#c9a45c{% endif %};">
+                            {{ r.status }}
+                        </td>
+                        <td class="action-cell">
+                            {% if r.status == 'pending' %}
+                            <div class="btn-group-short">
+                                <form action="{{ url_for('admin_approve_request', req_id=r.id) }}" method="POST" style="margin:0;">
+                                    <button type="submit" class="btn btn-tiny">APPROVE</button>
+                                </form>
+                                <form action="{{ url_for('admin_reject_request', req_id=r.id) }}" method="POST" style="margin:0;">
+                                    <button type="submit" class="btn btn-tiny btn-outline">REJECT</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <form action="{{ url_for('admin_delete_request', req_id=r.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Delete this request log?');">
+                                <button type="submit" class="btn btn-tiny btn-outline">DELETE</button>
                             </form>
-                            <form action="{{ url_for('admin_reject_request', req_id=r.id) }}" method="POST" style="margin:0;">
-                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: var(--cream); border: 1px solid var(--ink); color: var(--ink);">REJECT</button>
-                            </form>
-                        </div>
-                        {% else %}
-                        <form action="{{ url_for('admin_delete_request', req_id=r.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Delete this request log?');">
-                            <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: var(--cream); border: 1px dashed var(--ink); color: var(--ink);">DELETE</button>
-                        </form>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="7" style="text-align:center;">No book requests found.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" style="text-align:center;">No book requests found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Fines Tab -->
     <div id="tab-fines" class="admin-section">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Fine Count</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for u in users %}
-                <tr style="{% if u.fine_count and u.fine_count > 0 %}background: rgba(211, 47, 47, 0.04);{% endif %}">
-                    <td>#{{ u.id }}</td>
-                    <td style="font-weight: 500;">{{ u.name }}</td>
-                    <td>{{ u.email }}</td>
-                    <td>{{ u.role|upper }}</td>
-                    <td>
-                        {% if u.fine_count and u.fine_count > 0 %}
-                        <span class="fine-count-badge">{{ u.fine_count }}</span>
-                        {% else %}
-                        <span style="color: #829a73; font-size: 0.85rem; font-weight: bold;">0</span>
-                        {% endif %}
-                    </td>
-                    <td class="action-cell">
-                        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                            <form action="{{ url_for('admin_increase_fine', user_id=u.id) }}" method="POST" style="margin:0;">
-                                <button type="submit" class="btn fine-action-btn" style="background: var(--ink);">+1</button>
-                            </form>
-                            <form action="{{ url_for('admin_decrease_fine', user_id=u.id) }}" method="POST" style="margin:0;">
-                                <button type="submit" class="btn fine-action-btn" style="background: var(--cream); border: 1px solid var(--ink); color: var(--ink);">−1</button>
-                            </form>
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Fine Count</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr class="{% if u.fine_count and u.fine_count > 0 %}row-highlight{% endif %}">
+                        <td>#{{ u.id }}</td>
+                        <td style="font-weight: 500;">{{ u.name }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.role|upper }}</td>
+                        <td>
                             {% if u.fine_count and u.fine_count > 0 %}
-                            <form action="{{ url_for('admin_waive_fine', user_id=u.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Waive all fines for {{ u.name }}?');">
-                                <button type="submit" class="btn fine-action-btn" style="background: #829a73; border: 1px solid var(--ink);">WAIVE ALL</button>
-                            </form>
+                            <span class="fine-count-badge">{{ u.fine_count }}</span>
+                            {% else %}
+                            <span class="fine-clear">0</span>
                             {% endif %}
-                            <form action="{{ url_for('admin_set_fine', user_id=u.id) }}" method="POST" style="margin:0; display: flex; gap: 4px; align-items: center;">
-                                <input type="number" name="fine_amount" min="0" value="{{ u.fine_count or 0 }}" style="width: 55px; padding: 4px 6px; border: 1px solid var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; background: transparent;">
-                                <button type="submit" class="btn fine-action-btn" style="background: var(--cream); border: 1px solid var(--ink); color: var(--ink);">SET</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="6" style="text-align:center;">No users found.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td class="action-cell">
+                            <div class="btn-group-fines">
+                                <form action="{{ url_for('admin_increase_fine', user_id=u.id) }}" method="POST" style="margin:0;">
+                                    <button type="submit" class="btn btn-square">+1</button>
+                                </form>
+                                <form action="{{ url_for('admin_decrease_fine', user_id=u.id) }}" method="POST" style="margin:0;">
+                                    <button type="submit" class="btn btn-square btn-outline">−1</button>
+                                </form>
+                                {% if u.fine_count and u.fine_count > 0 %}
+                                <form action="{{ url_for('admin_waive_fine', user_id=u.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Waive all fines for {{ u.name }}?');">
+                                    <button type="submit" class="btn btn-tiny btn-success">WAIVE ALL</button>
+                                </form>
+                                {% endif %}
+                                <form action="{{ url_for('admin_set_fine', user_id=u.id) }}" method="POST" class="fine-set-form">
+                                    <input type="number" name="fine_amount" min="0" value="{{ u.fine_count or 0 }}">
+                                    <button type="submit" class="btn btn-tiny btn-outline">SET</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" style="text-align:center;">No users found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

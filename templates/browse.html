@@ -8,13 +8,14 @@
     </div>
 
     <!-- Genre Filter Bar -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(28,26,23,0.15);">
-        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: rgba(28,26,23,0.6);">
+    <!-- Genre Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-info">
             Showing {{ books|length }} title{{ 's' if books|length != 1 else '' }}{% if selected_genre %} in <strong style="color: var(--ink);">{{ selected_genre }}</strong>{% endif %}
         </div>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <label for="genre-filter" style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; text-transform: uppercase; color: var(--ink);">Sort by Genre:</label>
-            <select id="genre-filter" onchange="window.location.href = this.value ? '/browse?genre=' + encodeURIComponent(this.value) : '/browse'" style="border: 1px solid var(--ink); padding: 8px 15px; font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; background: var(--cream); cursor: pointer; min-width: 180px;">
+        <div class="filter-controls">
+            <label for="genre-filter">Sort by Genre:</label>
+            <select id="genre-filter" onchange="window.location.href = this.value ? '/browse?genre=' + encodeURIComponent(this.value) : '/browse'">
                 <option value="">All Genres</option>
                 {% for genre in genres %}
                     <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>{{ genre }}</option>

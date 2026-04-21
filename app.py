@@ -50,7 +50,7 @@ def check_and_apply_fines():
                 )
             conn.commit()
     except Exception as e:
-        print(f"Fine check error: {e}")
+        app.logger.error(f"Fine check error: {e}")
     finally:
         if 'conn' in locals() and conn.open:
             conn.close()
@@ -77,7 +77,7 @@ def load_user(user_id):
             if user_data:
                 return User(user_data['id'], user_data['name'], user_data['email'], user_data['role'])
     except Exception as e:
-        print(f"Database error: {e}")
+        app.logger.error(f"Database error: {e}")
     finally:
         if 'conn' in locals() and conn.open:
             conn.close()

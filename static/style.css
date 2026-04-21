@@ -3,6 +3,10 @@
     --ink: #1a1a1a;
     --warm-brown: #8b6b55;
     --accent-red: #d32f2f;
+    /* Responsive Typography */
+    --fs-h1: clamp(3rem, 10vw, 6rem);
+    --fs-h2: clamp(2rem, 8vw, 3.5rem);
+    --fs-h3: clamp(1.5rem, 6vw, 2.5rem);
 }
 
 * {
@@ -71,7 +75,7 @@ nav {
 .nav-center .brand {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 3.5rem;
+    font-size: 2.5rem; /* Reduced base size */
     font-weight: 500;
     color: var(--ink);
     text-decoration: none;
@@ -84,7 +88,7 @@ nav {
     top: 30px;
 }
 .home-page .nav-center .brand {
-    font-size: 6rem;
+    font-size: var(--fs-h1);
 }
 
 .nav-right {
@@ -161,7 +165,7 @@ nav {
 
 .page-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 3rem;
+    font-size: var(--fs-h2);
     font-weight: 500;
     margin-bottom: 40px;
     text-align: center;
@@ -245,11 +249,24 @@ nav {
     max-width: 650px;
 }
 
+.hero-subtext {
+    position: absolute;
+    right: 12%;
+    top: 60%;
+    text-align: right;
+    color: var(--cream);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    max-width: 300px;
+    opacity: 0.8;
+    z-index: 5;
+}
+
 
 
 .hero-heading {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 4.8rem; /* Slightly larger, more premium */
+    font-size: var(--fs-h1);
     line-height: 1.05;
     color: var(--cream);
     font-weight: 500;
@@ -380,6 +397,46 @@ nav {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
     margin-top: 40px;
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(28,26,23,0.15);
+}
+
+.filter-info {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    color: rgba(28,26,23,0.6);
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.filter-controls label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--ink);
+}
+
+.filter-controls select {
+    border: 1px solid var(--ink);
+    padding: 8px 15px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    background: var(--cream);
+    cursor: pointer;
+    min-width: 180px;
+    outline: none;
 }
 
 .book-card {
@@ -851,7 +908,7 @@ nav {
 
 .about-heading {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 5.5rem;
+    font-size: var(--fs-h1);
     color: var(--ink);
     margin-bottom: 40px;
     font-weight: 400;
@@ -1065,10 +1122,356 @@ nav {
     transition: all 0.2s ease;
 }
 
-.fine-action-btn:hover {
-    transform: translateY(-1px);
+.btn-tiny {
+    padding: 5px 10px;
+    font-size: 0.7rem;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.8rem;
+}
+
+.btn-danger {
+    background: var(--accent-red) !important;
+}
+
+.btn-success {
+    background: #829a73 !important;
+}
+
+.btn-outline {
+    background: var(--cream) !important;
+    border: 1px solid var(--ink) !important;
+    color: var(--ink) !important;
+}
+
+.btn-square {
+    padding: 5px;
+    min-width: 30px;
+    font-size: 0.8rem;
+}
+
+.btn-group-short, .btn-group-fines {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-group-short form, .btn-group-fines form { margin: 0; }
+
+.fine-action-btn { /* Legacy support */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Admin / Profile Utilities */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+}
+
+.no-actions {
+    font-size: 0.75rem;
+    color: rgba(28,26,23,0.5);
+    text-transform: uppercase;
+}
+
+.fine-clear { color: #829a73; font-size: 0.75rem; font-weight: bold; }
+.fine-badge-clear { background: #829a73; }
+
+.status-cell {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+.status-approved, .status-borrowed { color: #829a73; }
+.status-rejected, .status-denied { color: var(--accent-red); }
+.status-pending { color: #c9a45c; }
+
+.font-bold { font-weight: 600; }
+.empty-msg { font-family: 'IBM Plex Mono', monospace; color: var(--ink); }
+
+.row-highlight { background: rgba(211, 47, 47, 0.04); }
+
+/* Profile Specific */
+.profile-container {
+    display: grid;
+    grid-template-columns: 1fr 2.5fr;
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.profile-sidebar {
+    border: 2px solid var(--ink);
+    padding: 40px;
+    background: var(--cream);
+    height: fit-content;
+    position: sticky;
+    top: 120px;
+}
+
+.profile-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    color: var(--ink);
+    margin: 20px 0 10px 0;
+    line-height: 1;
+}
+
+.profile-email {
+    font-size: 0.9rem;
+    font-family: 'IBM Plex Mono', monospace;
+    color: rgba(28,26,23,0.7);
+    margin-bottom: 30px;
 }
 
 .fine-status-card {
+    padding: 20px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
     animation: fadeUp 0.5s ease;
+}
+
+.fine-active { border-color: var(--accent-red); }
+.fine-active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 4px;
+    background: var(--accent-red);
+}
+
+.fine-clear-card { border-color: #829a73; }
+.fine-clear-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 4px;
+    background: #829a73;
+}
+
+.fine-card-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(28,26,23,0.6);
+    margin-bottom: 12px;
+}
+
+.sidebar-section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.sidebar-help-text {
+    font-size: 0.8rem;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 20px;
+    color: rgba(28,26,23,0.7);
+    line-height: 1.5;
+}
+
+.sidebar-form { display: flex; flex-direction: column; gap: 15px; }
+
+.form-group-compact { margin-bottom: 0; }
+.form-group-compact input {
+    width: 100%;
+    border: 1px solid var(--ink);
+    padding: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    background: transparent;
+    border-radius: 0;
+    outline: none;
+}
+
+.section-title-large {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    color: var(--ink);
+    margin-bottom: 20px;
+}
+
+.border-top {
+    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+}
+
+.fine-set-form {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.fine-set-form input {
+    width: 55px;
+    padding: 4px 6px;
+    border: 1px solid var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    background: transparent;
+    outline: none;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 1024px) {
+    .container { padding: 120px 5% 60px 5%; }
+    .hero-landing-block { left: 8%; }
+    .about-metrics { gap: 40px; }
+}
+
+@media (max-width: 768px) {
+    /* Navbar */
+    nav {
+        height: auto;
+        flex-direction: column;
+        padding: 20px 4%;
+        gap: 60px;
+    }
+    .nav-center {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+    .home-page .nav-center { top: 0; }
+    .nav-right {
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .nav-left {
+        text-align: center;
+        width: 100%;
+        margin-bottom: -40px;
+    }
+
+    /* Hero Section */
+    .hero-home {
+        height: auto;
+        min-height: auto;
+        margin-top: 140px;
+    }
+    .hero-image-wrapper {
+        position: relative;
+        height: 400px;
+        clip-path: polygon(5% 0, 95% 0, 95% 90%, 50% 100%, 5% 90%);
+    }
+    .hero-landing-block {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        padding: 40px 5%;
+        text-align: center;
+        max-width: 100%;
+    }
+    .hero-heading {
+        color: var(--ink);
+        text-shadow: none;
+    }
+    .hero-cta {
+        color: var(--ink);
+        border-bottom-color: var(--ink);
+        text-shadow: none;
+    }
+    .hero-subtext {
+        position: relative !important;
+        top: 0 !important;
+        right: 0 !important;
+        text-align: center !important;
+        color: var(--ink) !important;
+        margin: 0 auto 40px auto;
+        max-width: 90% !important;
+    }
+    .hero-scroll { display: none; }
+
+    /* Home Content */
+    .intro-text p { font-size: 1.2rem; }
+    .intro-text p:last-child { font-size: 1.8rem; }
+    .stats-row {
+        flex-direction: column;
+        gap: 60px;
+        padding: 60px 0;
+    }
+    .stat-number { font-size: 6rem; }
+    
+    .portals-grid { grid-template-columns: 1fr; }
+    .portal-body { min-height: 200px; }
+
+    /* Filter Bar */
+    .filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    .filter-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    .filter-controls select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Profile / Layouts */
+    .container {
+        display: block !important;
+        padding: 100px 20px 40px 20px;
+    }
+    .profile-sidebar {
+        position: relative !important;
+        top: 0 !important;
+        margin-bottom: 40px;
+        width: 100%;
+    }
+
+    /* Admin */
+    .admin-tabs {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 15px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .admin-tab { white-space: nowrap; }
+    
+    .data-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 20px;
+        border: 1px solid rgba(26, 26, 26, 0.1);
+    }
+    
+    /* About */
+    .about-heading { font-size: 3.5rem; }
+    .about-metrics {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    /* Fine System Mobile */
+    .fine-badge {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+    }
+    .profile-sidebar {
+        padding: 25px;
+    }
+    .profile-name {
+        font-size: 2rem;
+    }
 }

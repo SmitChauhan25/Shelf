@@ -82,11 +82,13 @@ This document covers the schema design, table structures, relationships, constra
 | `email`    | `VARCHAR(150)`  | `UNIQUE`              | User's email (used for login)            |
 | `password` | `VARCHAR(255)`  | —                     | Hashed password (Werkzeug scrypt)        |
 | `role`     | `ENUM('user','admin')` | `DEFAULT 'user'` | Determines access level                  |
+| `fine_count` | `INT`           | `DEFAULT 0`           | Total number of overdue fines for the user |
 
 **Key Points:**
 - Passwords are **never stored in plain text** — they use Werkzeug's `scrypt` hashing algorithm
 - The `email` column has a `UNIQUE` constraint to prevent duplicate accounts
 - Only two roles exist: `user` (default) and `admin`
+- `fine_count` tracks how many times the user has failed to return a book by the due date
 - The seeded admin account is: `admin@shelf.com` / `admin123`
 
 ```sql
@@ -95,7 +97,8 @@ CREATE TABLE users (
   name VARCHAR(100),
   email VARCHAR(150) UNIQUE,
   password VARCHAR(255),
-  role ENUM('user','admin') DEFAULT 'user'
+  role ENUM('user','admin') DEFAULT 'user',
+  fine_count INT DEFAULT 0
 );
 ```
 
@@ -166,12 +169,14 @@ CREATE TABLE books (
 | `due_date`    | `DATE`                                        | —                     | Deadline for return (borrow_date + 14 days)|
 | `return_date` | `DATE`                                        | —                     | Actual return date (`NULL` until returned) |
 | `status`      | `ENUM('pending','borrowed','returned','rejected')` | `DEFAULT 'pending'` | Current state of the transaction      |
+| `fine_applied` | `TINYINT`                                     | `DEFAULT 0`           | Flag to prevent duplicate fine applying |
 
 **Key Points:**
 - When a user borrows a book, the transaction starts with status `'pending'`
 - An admin must **approve** the transaction (status → `'borrowed'`) before the user can return it
 - If rejected, the admin sets status → `'rejected'` and the book's `available_copies` is restored
 - `return_date` remains `NULL` until the book is returned
+- `fine_applied` is set to `1` once a fine has been recorded for this transaction to avoid double-charging
 - Both foreign keys use `ON DELETE CASCADE` — deleting a user or book removes associated transactions
 
 ```sql
@@ -183,6 +188,7 @@ CREATE TABLE transactions (
   due_date DATE,
   return_date DATE,
   status ENUM('pending','borrowed','returned','rejected') DEFAULT 'pending',
+  fine_applied TINYINT DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
 );
@@ -397,3 +403,28 @@ SOURCE schema.sql;
 - SQL queries use **parameterized statements** (`%s` placeholders) to prevent SQL injection
 - Admin routes are protected with role checks (`current_user.role != 'admin'`)
 - Sessions are managed by **Flask-Login** with a server-side secret key
+
+---
+
+## ⚖️ Automatic Fine System
+
+The library enforces a simple fine policy for overdue books.
+
+| Policy              | Rule                                                                 |
+| ------------------- | -------------------------------------------------------------------- |
+| **Detection**       | Automatic check occurs whenever an admin or the user visits their dashboard |
+| **Logic**           | If `CURDATE() > due_date` and `status = 'borrowed'`, user is fined   |
+| **Increment**       | `fine_count` is increased by **1 per overdue book**                  |
+| **One-time Charge** | Once a fine is applied to a transaction, `fine_applied` is set to `1` |
+| **Admin Control**   | Admins can manually waive, increase, or decrease fines per user      |
+
+### Database Logic Example:
+```sql
+-- Search for new overdue books
+SELECT id, user_id FROM transactions
+WHERE status = 'borrowed' AND due_date < CURDATE() AND fine_applied = 0;
+
+-- Apply fine and mark as processed
+UPDATE users SET fine_count = fine_count + 1 WHERE id = ?;
+UPDATE transactions SET fine_applied = 1 WHERE id = ?;
+```

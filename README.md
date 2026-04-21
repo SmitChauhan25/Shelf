@@ -176,6 +176,7 @@ lib-management/
 
 ### System
 - **Authentication** — Secure login/signup with hashed passwords (Werkzeug scrypt)
+- **Automatic Fine Tracking** — Detects overdue books and increments user fine count automatically
 - **Role-Based Access** — Admin routes are protected; only `admin` role users can access the dashboard
 - **Flash Messages** — User feedback for all actions (success, error, warnings)
 
