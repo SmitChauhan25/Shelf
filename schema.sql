@@ -1,6 +1,4 @@
-DROP DATABASE IF EXISTS shelf_db;
-CREATE DATABASE shelf_db;
-USE shelf_db;
+USE railway;
 
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
