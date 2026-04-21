@@ -1,5 +1,6 @@
 USE railway;
 
+
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100),
@@ -12,7 +13,8 @@ CREATE TABLE users (
 CREATE TABLE books (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(200),
-  author VARCHAR(150),
+  author VARCHAR(15
+  0),
   genre VARCHAR(80),
   total_copies INT DEFAULT 1,
   available_copies INT DEFAULT 1
