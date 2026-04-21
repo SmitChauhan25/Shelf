@@ -8,13 +8,13 @@ import threading
 import time
 
 app = Flask(__name__)
-app.secret_key = 'shelf_secret_key_123'
+app.secret_key = os.environ.get('SECRET_KEY', 'shelf_secret_key_123')
 
-# Hardcoded DB Config
-DB_HOST = 'localhost'
-DB_USER = 'root'
-DB_PASSWORD = 'NewPassword123!'
-DB_NAME = 'shelf_db'
+# Dynamic DB Config
+DB_HOST = os.environ.get('MYSQLHOST', 'localhost')
+DB_USER = os.environ.get('MYSQLUSER', 'root')
+DB_PASSWORD = os.environ.get('MYSQLPASSWORD', 'NewPassword123!')
+DB_NAME = os.environ.get('MYSQL_DATABASE', 'shelf_db')
 
 def get_db_connection():
     return pymysql.connect(
