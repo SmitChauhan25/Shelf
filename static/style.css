@@ -1335,10 +1335,14 @@ nav {
 @media (max-width: 768px) {
     /* Navbar */
     nav {
+        position: relative; /* Push hero down */
+        top: 0;
         height: auto;
         flex-direction: column;
-        padding: 20px 4%;
-        gap: 60px;
+        padding: 40px 4% 20px 4%;
+        gap: 30px; /* Reduced gap */
+        background-color: var(--cream);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
     }
     .nav-center {
         position: relative;
@@ -1355,14 +1359,14 @@ nav {
     .nav-left {
         text-align: center;
         width: 100%;
-        margin-bottom: -40px;
+        margin-bottom: 0;
     }
 
     /* Hero Section */
     .hero-home {
         height: auto;
         min-height: auto;
-        margin-top: 140px;
+        margin-top: 20px; /* Space from the nav */
     }
     .hero-image-wrapper {
         position: relative;
