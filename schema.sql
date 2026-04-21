@@ -1,5 +1,10 @@
 USE railway;
 
+-- Reset tables to allow re-running the script
+DROP TABLE IF EXISTS book_requests;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -13,8 +18,7 @@ CREATE TABLE users (
 CREATE TABLE books (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(200),
-  author VARCHAR(15
-  0),
+  author VARCHAR(150),
   genre VARCHAR(80),
   total_copies INT DEFAULT 1,
   available_copies INT DEFAULT 1
