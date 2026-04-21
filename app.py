@@ -4,6 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 import pymysql
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date, timedelta
+from urllib.parse import urlparse
 import threading
 import time
 
@@ -11,10 +12,21 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'shelf_secret_key_123')
 
 # Dynamic DB Config
-DB_HOST = os.environ.get('MYSQLHOST', 'localhost')
-DB_USER = os.environ.get('MYSQLUSER', 'root')
-DB_PASSWORD = os.environ.get('MYSQLPASSWORD', 'NewPassword123!')
-DB_NAME = os.environ.get('MYSQL_DATABASE', 'shelf_db')
+MYSQL_URL = os.environ.get('MYSQL_URL')
+
+if MYSQL_URL:
+    url = urlparse(MYSQL_URL)
+    DB_HOST = url.hostname
+    DB_USER = url.username
+    DB_PASSWORD = url.password
+    DB_PORT = url.port or 3306
+    DB_NAME = url.path.lstrip('/')
+else:
+    DB_HOST = os.environ.get('MYSQLHOST', 'localhost')
+    DB_USER = os.environ.get('MYSQLUSER', 'root')
+    DB_PASSWORD = os.environ.get('MYSQLPASSWORD', 'NewPassword123!')
+    DB_PORT = int(os.environ.get('MYSQLPORT', 3306))
+    DB_NAME = os.environ.get('MYSQL_DATABASE', 'shelf_db')
 
 def get_db_connection():
     return pymysql.connect(
@@ -22,6 +34,7 @@ def get_db_connection():
         user=DB_USER,
         password=DB_PASSWORD,
         database=DB_NAME,
+        port=DB_PORT,
         cursorclass=pymysql.cursors.DictCursor
     )
 
